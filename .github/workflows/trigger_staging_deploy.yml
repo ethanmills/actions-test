@@ -20,6 +20,7 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
       - name: do the thing
         run: |
+          git fetch
           git branch tmp-branch
           git switch main
           git reset --hard tmp-branch --
