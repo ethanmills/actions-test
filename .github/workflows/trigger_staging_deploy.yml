@@ -30,5 +30,6 @@ jobs:
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
           branch: staging-release
+          delete-branch: true
           title: Release version ${{ github.event.inputs.version }} to staging
           base: main
