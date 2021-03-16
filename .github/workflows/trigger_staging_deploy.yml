@@ -1,0 +1,27 @@
+name: Trigger release to staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Which version are you creating?
+        required: true
+      ref:
+        description: Branch to deploy
+        required: true
+        default: develop
+jobs:
+  create-pr:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout Code
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.PERSONAL_TOKEN }}
+          branch: staging-release
+          title: Release version ${{ github.event.inputs.version }} to staging
+          base: main
