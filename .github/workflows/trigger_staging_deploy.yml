@@ -19,7 +19,9 @@ jobs:
         with:
           ref: main
       - name: do the thing
-        run: git reset --hard ${{ github.event.inputs.ref }}
+        run: |
+          git fetch
+          git reset --hard ${{ github.event.inputs.ref }} --
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
