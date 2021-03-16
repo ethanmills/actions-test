@@ -1,0 +1,18 @@
+name: Pushed to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: setup-inputs
+        run: |
+           TAGNAME=$(git log -1 --pretty=%B | sed -n 's/Release version \(.*\) to staging/\1/p')
+           git tag -f $TAGNAME
+           git push origin $TAGNAME -f
