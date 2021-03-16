@@ -17,11 +17,13 @@ jobs:
       - uses: actions/checkout@v2
         name: Checkout Code
         with:
-          ref: main
+          ref: ${{ github.event.inputs.ref }}
       - name: do the thing
         run: |
-          git fetch
-          git reset --hard ${{ github.event.inputs.ref }} --
+          git branch tmp-branch
+          git switch main
+          git reset --hard tmp-branch --
+          git branch -D tmp-branch
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
