@@ -18,10 +18,18 @@ jobs:
         name: Checkout Code
         with:
           ref: ${{ github.event.inputs.ref }}
+      - name: do the thing
+        run: |
+          git fetch
+          git branch tmp-branch
+          git switch main
+          git reset --hard tmp-branch --
+          git branch -D tmp-branch
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
-          branch: ${{ github.event.inputs.ref }}
+          branch: staging-release
+          delete-branch: true
           title: Release version ${{ github.event.inputs.version }} to staging
           base: main
