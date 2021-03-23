@@ -52,9 +52,9 @@ jobs:
           git switch main
           git reset --hard tmp-branch --
           git branch -D tmp-branch
-          git tag -f $TAGNAME
+          git tag -f ${{ github.event.inputs.version }}
 
-          git push --force origin $TAGNAME
+          git push --force origin ${{ github.event.inputs.version }}
           git push --force origin main
 
           echo "HEAD=$(git rev-parse head)" >> $GITHUB_ENV
