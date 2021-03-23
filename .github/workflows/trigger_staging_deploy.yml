@@ -1,4 +1,4 @@
-name: Trigger release to staging
+name: Deploy to Staging
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
         description: Which version are you creating?
         required: true
       ref:
-        description: Branch to deploy
+        description: Git ref to deploy
         required: true
         default: develop
 jobs:
@@ -18,18 +18,50 @@ jobs:
         name: Checkout Code
         with:
           ref: ${{ github.event.inputs.ref }}
-      - name: do the thing
+
+      - name: Branch protection OFF
+        uses: octokit/request-action@v2.x
+        with:
+          route: PUT /repos/ethanmills/actions-test/branches/main/protection
+          repository: ${{ github.repository }}
+          owner: ethanmills
+          enforce_admins: |
+            null
+          allow_force_pushes: |
+            true
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+
+      - name: Update master
         run: |
           git fetch
           git branch tmp-branch
           git switch main
           git reset --hard tmp-branch --
           git branch -D tmp-branch
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+          git tag -f $TAGNAME
+
+          git push --force origin $TAGNAME
+          git push --force origin main
+
+          echo "HEAD=$(git rev-parse head)" >> $GITHUB_ENV
+
+      - name: Branch protection ON
+        uses: octokit/request-action@v2.x
         with:
-          token: ${{ secrets.PERSONAL_TOKEN }}
-          branch: staging-release
-          delete-branch: true
-          title: Release version ${{ github.event.inputs.version }} to staging
-          base: main
+          route: PUT /repos/ethanmills/actions-test/branches/master/protection
+          repository: ${{ github.repository }}
+          owner: ethanmills
+          enforce_admins: |
+            true
+          allow_force_pushes: |
+            null
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+
+      - name: setup-inputs
+        run: |
+          INPUTS='${{ format('{{"environment": "staging", "ref": "{0}"}}', env.HEAD) }}'
+          echo "INPUTS=${INPUTS}" >> $GITHUB_ENV
+
+     
