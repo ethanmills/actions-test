@@ -23,3 +23,7 @@ jobs:
         run: |
           INPUTS='${{ format('{{"environment": "production", "ref": "{0}"}}', env.HEAD) }}'
           echo "INPUTS=${INPUTS}" >> $GITHUB_ENV
+          
+      - name: test-sha
+        run: |
+          echo ${{ github.sha }}
