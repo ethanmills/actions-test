@@ -1,0 +1,17 @@
+name: test docker
+on:
+  workflow-dispatch:
+  
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ethanecf
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: tag
+      run: |
+        docker tag ethanecf/ecf:4 ethanecf/ecf:5
+        docker push ethanecf/ecf:5
