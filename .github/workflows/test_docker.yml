@@ -13,5 +13,6 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: tag
       run: |
+        docker pull ethanecf/ecf:4
         docker tag ethanecf/ecf:4 ethanecf/ecf:5
         docker push ethanecf/ecf:5
