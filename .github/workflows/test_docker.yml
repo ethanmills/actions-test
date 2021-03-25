@@ -1,6 +1,6 @@
 name: test docker
 on:
-  workflow-dispatch:
+  workflow_dispatch:
   
 jobs:
   test:
